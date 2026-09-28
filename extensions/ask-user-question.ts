@@ -570,12 +570,14 @@ export default function askUserQuestion(pi: ExtensionAPI) {
 		name: "ask_user_question",
 		label: "ask_user_question",
 		description:
-			"Ask the user a single question and pause execution until they answer. Use this when requirements are ambiguous, user preferences are needed, a decision would materially affect implementation, or you need confirmation before proceeding. Ask exactly one question per tool call, and prefer multiple separate tool calls over bundling unrelated questions together.",
+			"Ask the user a single question and pause execution until they answer. Use it for clarification, preferences, decisions, or open learning attempts such as explanations, predictions, and exercises. Omit options for free-form text, even when the question has a definite answer. This tool collects the response without grading it; assess learning attempts yourself against a rubric. Use chat or files for longer work or code, and quiz for automatic grading of selected choices.",
 		promptSnippet:
-			"Use this tool to ask exactly one clarifying question, missing-requirement question, preference question, or decision question before continuing.",
+			"Ask one clarification, preference, decision, or open learning question. Omit options for a free-form learning attempt and assess it yourself; the tool does not grade answers.",
 		promptGuidelines: [
 			"Ask exactly one question per tool call.",
-			"If you need answers to multiple questions, make multiple separate ask_user_question tool calls instead of combining them into one prompt.",
+			"For an open learning attempt, omit options even if a definite answer exists. Decide the assessment rubric before asking, collect the attempt, then give feedback against that rubric. Use quiz only when selecting among options suits the objective and automatic key matching is wanted.",
+			"Use chat or files for longer exercises, derivations, or code when they provide a better workspace than the text editor.",
+			"During a lesson, follow the teaching skill's probing budget and stopping rules across all question formats. Open learning attempts count toward the same initial budget as quiz questions.",
 			'Users will always be able to select "Other" to provide custom text input when options are provided.',
 			"Use multiSelect: true only when you need multiple answers to the same question.",
 			'If you recommend a specific option, make it the first option in the list and add "(Recommended)" at the end of the label.',

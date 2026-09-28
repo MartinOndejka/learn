@@ -11,16 +11,15 @@ import {
 import { Type } from "@sinclair/typebox";
 
 // ────────────────────────────────────────────────────────────────────────────
-// quiz — a GRADED sibling of ask_user_question.
+// quiz — automatic choice grading against an author-supplied answer key.
 //
-// Where ask_user_question collects a preference/decision with no notion of
-// right or wrong, `quiz` poses a question that HAS a correct answer, grades the
-// user's selection instantly, and shows tight feedback (✓/✗ + the correct
-// answer + an optional explanation) to both the user and the agent.
+// `quiz` matches the user's selection to the key and shows feedback
+// (✓/✗ + the keyed answer + an explanation) to both the user and the agent.
+// The author must verify the key; matching does not validate its factual truth.
 //
 // It is intentionally options-only: single-select or multi-select. There is no
-// free-text mode and no "Other" option, because a free-text answer can't be
-// graded against a correct index.
+// free-text answer mode or "Other" option. Open learning attempts belong in
+// ask_user_question (without options), chat, or files; the teacher assesses them.
 // ────────────────────────────────────────────────────────────────────────────
 
 interface QuizOption {
@@ -106,7 +105,7 @@ const QuizParams = Type.Object({
 	),
 	correctAnswer: Type.Union([Type.String(), Type.Array(Type.String())], {
 		description:
-			'REQUIRED. The correct answer as the option value(s) — the `value` field of the option you intend. Single-select: a single string (e.g. "mercury"). Multi-select: an array of strings (e.g. ["belize", "niue"]); the user is only correct if their selection matches this set exactly. Always pass the value, not a position number — this is self-checking and prevents miscounting.',
+			'REQUIRED. The correct answer as the option value(s) — the `value` field of the option you intend. Single-select: a single string (e.g. "mercury"). Multi-select: an array of strings (e.g. ["belize", "niue"]); the user is only correct if their selection matches this set exactly. Always pass the value, not a position number. This validates key references, not the factual correctness of your answer.',
 	}),
 	explanation: Type.String({
 		description:
@@ -878,25 +877,25 @@ export default function quiz(pi: ExtensionAPI) {
 		name: "quiz",
 		label: "quiz",
 		description:
-			"Ask the user a GRADED question with a known correct answer, then instantly grade and give feedback. Unlike ask_user_question (which collects preferences/decisions with no right answer), quiz always has a correct answer supplied by you, marks the user's selection right/wrong (✓/✗), reveals the correct answer, and can show an explanation. Use it to (1) assess what the learner already understands before teaching, and (2) run tight practice/retrieval loops after explaining, or probe understanding whenever you're unsure they've got it. Options-only: single-select or multi-select, plus an automatic 'I don't know' choice so the user can signal a genuine gap instead of guessing. An always-present optional note field (Tab to focus it) lets the user attach a free-text note to ANY answer; it reaches you only when non-empty. No free-text answers — for non-graded questions use ask_user_question instead.",
+			"Ask a multiple-choice or multi-select question, automatically grade the selection against your supplied answer key, and reveal the answer and explanation after submission. Verify the key yourself; the tool checks agreement with it, not factual truth. Use quiz when choosing among options suits the learning objective. For open explanations, predictions, or exercises, use ask_user_question without options, or chat/files for longer work, and assess the response yourself against a rubric. Options-only, with an automatic 'I don't know' choice and an optional note field (Tab to focus it); notes reach you when non-empty and are not automatically graded.",
 		promptSnippet:
-			"Use the quiz tool to test the user with a graded multiple-choice or multi-select question (required correct answer + required explanation). For non-graded questions, use ask_user_question.",
+			"Use quiz for automatic choice grading (required answer key and explanation). Use ask_user_question without options for open learning attempts, even when a definite answer exists; assess those attempts yourself.",
 		promptGuidelines: [
-			"quiz is GRADED; ask_user_question is not. If the question has a correct answer, use quiz. If you just need a preference, decision, or open-ended input, use ask_user_question.",
+			"Choose the response format to match the learning objective: quiz automatically grades choices; ask_user_question without options collects open explanations, predictions, or exercises for teacher assessment, even when there is a definite answer. Use chat or files for longer work or code, and ask_user_question for preferences or decisions.",
 			'correctAnswer is REQUIRED and is the option value, not a position number. Single-select: one string (e.g. "mercury"). Multi-select: an array of strings (e.g. ["belize", "niue"]).',
-			"Always pass the option's `value` string as correctAnswer — it is self-checking and prevents miscounting positions. A value that matches no option is a hard error.",
+			"Always pass the option's `value` string as correctAnswer. A value that matches no option is a hard error. This validates key references, not factual truth; verify consequential or uncertain answers with a source, calculation, or executable example before asking.",
 			"explanation is REQUIRED — always say why the correct answer is correct.",
 			"Multi-select is graded as an exact-set match: the user is correct only if they select every correct option and no incorrect ones.",
 			"There is no free-text mode. An 'I don't know' choice is ALWAYS added automatically — provide ONLY the real, gradable options (at least two). Never add your own uncertainty/opt-out option like 'I don't know', 'I'm not sure', or 'Not sure'; that is handled for you and a manual one would be redundant or gradable-as-wrong.",
 			"If a result comes back as dontKnow, the user honestly did not know and did NOT guess — treat it as a genuine knowledge gap to teach into, not as a wrong answer.",
 			"Any answer (right, wrong, or 'I don't know') may carry an optional free-text `note` the user typed in the always-present note field. When present it reflects what they were thinking or unsure about — read it and let it steer your follow-up. It is omitted entirely when empty.",
-			"Treat each wrong answer (distractor) as a diagnostic probe, not just filler: make it a specific, believable mistake the user might actually hold — a common misconception, or an adjacent/easily-confused concept — so that WHICH wrong answer they pick reveals WHICH nuance of their understanding is off. You learn far more from a targeted wrong choice than from a binary right/wrong, and the choice tells you exactly which gap to teach into next (and what the explanation should address).",
+			"Make each distractor a specific, believable mistake, such as a common misconception or an easily confused concept. Treat the selection as evidence of a possible gap, and use the learner's reasoning or note to interpret it; a choice alone does not establish a misconception.",
 			"Guardrail: every distractor must be unambiguously wrong on the intended reading — tempting, but a real error, not a defensible alternative. Don't drift into trick questions.",
 			"Anti-guessing hygiene: don't let the correct answer stand out by form (longest, most precise, most hedged, or the only one in the right format). Keep options similar in length, specificity, and phrasing so it can't be picked from shape alone.",
 			"Set multiSelect: true only when more than one option is correct.",
 			"Options are shuffled before display by default, so don't worry about which position you list the correct answer in. Set shuffle: false only when option order is meaningful (ordered values, or an 'All/None of the above' option that must stay last).",
-			"To probe nuance, ask several quick quiz questions and adapt each one based on the previous answers, rather than writing one giant question.",
-			"Don't leak the answer through formatting: keep option phrasing/length even and don't hint which is correct.",
+			"During a lesson, follow the teaching skill's probing budget and stopping rules across all question formats. Adapt within that budget, then begin teaching; uncertainty is not a reason to extend initial probing.",
+			"Keep the answer and explanation out of the question and details; reveal feedback only after submission. Keep option phrasing/length even and avoid hints about which is correct.",
 		],
 		parameters: QuizParams,
 
