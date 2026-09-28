@@ -30,7 +30,7 @@ The teaching skill directs this process; the extensions supply the interactions.
 This repo **is** a `.pi` directory. From your learning project's root:
 
 ```bash
-git clone https://github.com/amosblomqvist/learn .pi
+git clone https://github.com/MartinOndejka/learn .pi
 ```
 
 Then open pi in that directory. (Or copy the pieces you want into your existing project config.)
