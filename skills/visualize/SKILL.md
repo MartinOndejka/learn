@@ -5,13 +5,13 @@ description: "Add a correct, minimal visual to a lesson — a diagram or geometr
 
 # Visualize
 
-A picture earns its place only when it shows something words can't — shape, structure, direction, relationship, geometry. This skill produces ONE such picture, guarantees it is **correct** (the maker renders it and looks at it before returning), and drops it into the lesson so it renders inline in the Obsidian `md-log` file.
+A picture earns its place when it makes shape, structure, direction, relationship, or geometry clearer. This skill produces ONE picture, checks the rendered result against the brief, and drops it into the lesson so it renders inline in the Obsidian `md-log` file. Verify the brief's substantive claims and assumptions before dispatch; visual inspection checks fidelity and readability, not independent factual truth.
 
 You are the **creative director**. You decide the exact idea and distill it to its fewest carrying elements. A **maker subagent** does the authoring, rendering, visual verification, and saving, then returns a filename. You embed that filename in your reply.
 
 ## When to visualize (and when not to)
 
-This teaching system builds a **dependency graph in the learner's head** — axioms at the root, derived facts hanging off them. A visual is powerful exactly when it makes that structure (or a geometry) visible. Reach for one when:
+This teaching system builds a **dependency graph in the learner's head** — established foundations at the start, new ideas connected to them. A visual is powerful when it makes that structure (or a geometry) visible. Reach for one when:
 
 - The idea is a **structure or relationship**: dependencies, a system with parts and arrows, a flow/pipeline, a sequence of exchanges, a state machine, a tree/hierarchy, a comparison, a containment (what's inside vs outside).
 - The idea is **spatial or geometric**: coordinate geometry, a number line, vectors, a function's shape, a physical arrangement.
@@ -71,7 +71,7 @@ That's all. The `md-log` extension mirrors your reply text verbatim into the lin
 
 ## Why this is reliable
 
-- The maker never returns a picture it hasn't **looked at**, so "renders fine but says something false" is caught before it reaches the learner.
+- The maker **looks at** the rendered picture to catch layout problems and mismatches with the brief. The teacher remains responsible for verifying the relationships in the brief.
 - PNG embed means **what the maker verified is pixel-identical to what the learner sees** — no re-render drift.
 - Unique filenames keep Obsidian's by-filename embed resolution unambiguous.
 

@@ -58,4 +58,4 @@ with a one-line reason (e.g. the brief is self-contradictory, or needs a spatial
 - **One idea, fewest elements.** Sparse beats busy — for both readability and layout reliability.
 - **Keep labels short.** Nodes hold a term or short phrase, not a sentence. Long labels wreck layout.
 - **Don't invent content.** Visualize only what the brief specifies. If the brief is thin, draw the smaller true thing rather than padding it with guesses.
-- **Match the pedagogy when it fits.** Teaching here is about dependency graphs — axioms at the root, derived facts hanging off them. `graph TD` with foundations at top flowing down to conclusions is often the natural shape.
+- **Match the pedagogy when it fits.** Teaching here connects new ideas to foundations already established for the learner and goal. These starting points need not be axioms. `graph TD` with foundations at top flowing down to conclusions is often the natural shape; preserve any assumptions supplied in the brief.
